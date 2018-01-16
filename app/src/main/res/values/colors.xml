@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="spinnerArrow">#0000FF</color>
+    <color name="spinnerBase">#cccccc</color>
+    <color name="floatingLabel">#0000FF</color>
+    <color name="error">#E03030</color>
+    <color name="highlight">#3030E0</color>
+    <color name="hint">#80a0F0</color>
+</resources>

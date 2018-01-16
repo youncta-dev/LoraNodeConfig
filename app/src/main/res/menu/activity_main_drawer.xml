@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_info"
+            android:icon="@drawable/ic_device_information"
+            android:title="Info"
+            android:enabled="false" />
+        <item
+            android:id="@+id/nav_system"
+            android:icon="@drawable/ic_alert"
+            android:title="System"
+            android:enabled="false" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+
+        </menu>
+    </item>
+
+</menu>

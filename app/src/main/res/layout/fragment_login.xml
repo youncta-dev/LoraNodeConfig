@@ -1,0 +1,89 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.youncta.loranodeconfig.LoginFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="5dp">
+
+
+        <Space
+            android:layout_width="fill_parent"
+            android:layout_height="20dp" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1.0"
+            android:orientation="horizontal"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:gravity="center_horizontal" >
+
+            <ImageView
+                android:layout_width="0dp"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7"
+                android:src="@drawable/youncta_logo"/>
+        </LinearLayout>
+
+
+        <Space
+            android:layout_width="fill_parent"
+            android:layout_height="60dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+
+                android:id="@+id/input_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Space
+            android:layout_width="fill_parent"
+            android:layout_height="10dp"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Space
+            android:layout_width="fill_parent"
+            android:layout_height="30dp"/>
+
+        <Button
+            android:id="@+id/btn_signin"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:background="@android:color/holo_orange_light"
+            android:text="@string/btn_sign_in"
+            android:textColor="@android:color/white"
+            />
+    </LinearLayout>
+
+</FrameLayout>

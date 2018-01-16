@@ -1,0 +1,76 @@
+<resources>
+    <string name="app_name">Y Mobile</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="equipment_name">Y-Packet 2</string>
+    <string name="email">info@youncta.com</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="hint_email">Email</string>
+    <string name="hint_ip_address">IP address</string>
+    <string name="hint_application_key">Application Key</string>
+    <string name="hint_device_name">Device Name</string>
+    <string name="hint_location_name">Location Name</string>
+    <string name="hint_gps_longitude">Lon</string>
+    <string name="hint_gps_latitude">Lat</string>
+    <string name="hint_gps_altitude">Alt</string>
+    <string name="hint_netmask">Netmask</string>
+    <string name="hint_stag">S Tag</string>
+    <string name="hint_ctag">C Tag</string>
+    <string name="hint_gateway">Gateway</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_user_name">User name</string>
+
+    <string name="hint_tx_frequency">Tx Frequency [MHz]</string>
+    <string name="hint_rx_frequency">Rx Frequency [MHz]</string>
+    <string name="hint_tx_power">Tx Power [dBm]</string>
+    <string name="hint_tx_min_power">Min Tx Power [dBm]</string>
+    <string name="hint_tx_max_power">Max Tx Power [dBm]</string>
+    <string name="hint_atpc_rx_target_power">Rx Target Power [dBm]</string>
+    <string name="hint_modulation">Modulation [QAM]</string>
+    <string name="hint_modulation_max">Max Modulation</string>
+    <string name="hint_modulation_min">Min Modulation</string>
+    <string name="hint_channel_width">Channel width [MHz]</string>
+
+    <string name="ATPC">ATPC</string>
+    <string name="AutoNegotiation">Auto Negotiation</string>
+    <string name="ChannelWidth">Channel [MHz]</string>
+    <string name="Modulation">Modulation</string>
+    <string name="MinModulation">Min Modulation</string>
+    <string name="MaxModulation">Max Modulation</string>
+    <string name="AMC">AMC</string>
+    <string name="btn_sign_in">Sign In</string>
+    <string name="btn_apply">Apply</string>
+    <string name="btn_get_token">Get token</string>
+    <string name="btn_refresh">Refresh</string>
+    <string name="err_msg_name">Enter your full name</string>
+    <string name="err_msg_email">Enter valid email address</string>
+    <string name="err_msg_password">Enter the password</string>
+
+    <string name="nfcNotSupportedErrorTitle">NFC Not Supported</string>
+    <string name="nfcNotSupportedError">This device does not support NFC.</string>
+    <string name="nfcDisabledErrorTitle">NFC Disabled</string>
+    <string name="nfcDisabledError">This device supports NFC, but it is disabled. Enable it in the device\'s settings.</string>
+    <string name="nfcReadOnlyErrorTitle">NFC Read Only</string>
+    <string name="nfcReadOnlyError">The NFC tag is read only.</string>
+    <string name="nfcDetectionError">NFC detection error.</string>
+    <string name="nfcTagAlreadyRead">NFC tag already read, not reading again.</string>
+    <string name="nfcFormattingErrorTitle">Formatting Error</string>
+    <string name="nfcFormattingError">There was an error formatting the NFC tag.</string>
+    <string name="nfcTagLostErrorTitle">Tag Lost</string>
+    <string name="nfcTagLostError">The tag was lost or pulled away while writing to it.</string>
+    <string name="nfcNoNdefErrorTitle">Invalid Tag</string>
+    <string name="nfcNoNdefError">The NFC tag does not support NDEF format.</string>
+    <string name="nfcBadSpaceErrorTitle">Not Enough Space</string>
+    <string name="nfcBadSpaceError">The NFC tag cannot hold the amount of data required.</string>
+    <string name="nfcUnknownErrorTitle">Unknown Error :(</string>
+    <string name="nfcUnknownError">An unknown error occurred while writing to the NFC tag.</string>
+    <string name="nfcWrittenTitle">Success!</string>
+    <string name="nfcWritten">The NFC tag was written successfully.</string>
+    <string name="nfcWriteInstructions">Place your phone close to the NFC tag.</string>
+</resources>
