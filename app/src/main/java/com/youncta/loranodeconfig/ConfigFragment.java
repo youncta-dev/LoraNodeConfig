@@ -67,7 +67,6 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
     final private static String applicationServerHost = "172.30.0.8";
     final private static String applicationServerPort = "8090";
-    private OnFragmentInteractionListener mListener;
 
     private OnFragmentInteractionListener mListener;
 
@@ -163,16 +162,14 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
         deviceEuiSourceIndIcon.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String randomDeviceEui = RandomStringUtils.randomNumeric(16);
-                deviceEui.setText(randomDeviceEui);
+                deviceEui.setText(RandomStringUtils.randomNumeric(16));
                 Toast.makeText(act, "Device EUI generated", Toast.LENGTH_SHORT).show();
             }
         });
 
         applicationKeySourceIndIcon.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                String randomApplicationKey = RandomStringUtils.randomNumeric(32);
-                applicationKey.setText(randomApplicationKey);
+                applicationKey.setText(RandomStringUtils.randomNumeric(32));
                 Toast.makeText(act, "Application Key generated", Toast.LENGTH_SHORT).show();
             }
         });
