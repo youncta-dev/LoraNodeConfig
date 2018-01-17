@@ -54,8 +54,6 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private String randomDeviceEui;
-    private String randomApplicationKey;
     LocationManager locationManager = null;
 
     EditText deviceName;
@@ -66,6 +64,10 @@ public class ConfigFragment extends Fragment implements OnSaveData {
     EditText gpsLat;
     EditText gpsAlt;
     Button configureDevice;
+
+    final private static String applicationServerHost = "172.30.0.8";
+    final private static String applicationServerPort = "8090";
+    private OnFragmentInteractionListener mListener;
 
     private OnFragmentInteractionListener mListener;
 
@@ -161,7 +163,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
         deviceEuiSourceIndIcon.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                randomDeviceEui = RandomStringUtils.randomNumeric(16);
+                String randomDeviceEui = RandomStringUtils.randomNumeric(16);
                 deviceEui.setText(randomDeviceEui);
                 Toast.makeText(act, "Device EUI generated", Toast.LENGTH_SHORT).show();
             }
@@ -169,7 +171,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
         applicationKeySourceIndIcon.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                randomApplicationKey = RandomStringUtils.randomNumeric(32);
+                String randomApplicationKey = RandomStringUtils.randomNumeric(32);
                 applicationKey.setText(randomApplicationKey);
                 Toast.makeText(act, "Application Key generated", Toast.LENGTH_SHORT).show();
             }
@@ -206,7 +208,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
     public void createNode() {
         final String REQUEST_TAG = "configuration.node";
-        String url = "https://172.30.0.8:8090/api/devices";
+        String url = "https://" + applicationServerHost + ":" + applicationServerPort + "/api/devices";
 
         JSONObject params = new JSONObject();
         try {
@@ -290,7 +292,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
     public void addKey() {
         final String REQUEST_TAG = "configuration.key";
-        String url = "https://172.30.0.8:8090/api/devices/" + deviceEui.getText().toString() + "/keys";
+        String url = "https://" + applicationServerHost + ":" + applicationServerPort + "/api/devices/" + deviceEui.getText().toString() + "/keys";
 
         JSONObject params = new JSONObject();
         try {
