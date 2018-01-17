@@ -13,12 +13,14 @@
 
     <string name="hint_email">Email</string>
     <string name="hint_ip_address">IP address</string>
-    <string name="hint_application_key">Application Key</string>
     <string name="hint_device_name">Device Name</string>
+    <string name="hint_device_eui">Device EUI</string>
+    <string name="hint_application_key">Application Key</string>
     <string name="hint_location_name">Location Name</string>
     <string name="hint_gps_longitude">Lon</string>
     <string name="hint_gps_latitude">Lat</string>
     <string name="hint_gps_altitude">Alt</string>
+    <string name="device_configure_button_value">Configure Device</string>
     <string name="hint_netmask">Netmask</string>
     <string name="hint_stag">S Tag</string>
     <string name="hint_ctag">C Tag</string>

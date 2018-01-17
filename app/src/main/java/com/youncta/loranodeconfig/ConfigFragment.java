@@ -1,25 +1,43 @@
 package com.youncta.loranodeconfig;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.json.JSONObject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,14 +54,18 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
     // TODO: Rename and change types of parameters
     private String mParam1;
+    private String randomDeviceEui;
+    private String randomApplicationKey;
     LocationManager locationManager = null;
 
-    EditText applicationKey;
     EditText deviceName;
+    EditText deviceEui;
+    EditText applicationKey;
     EditText locationName;
     EditText gpsLon;
     EditText gpsLat;
     EditText gpsAlt;
+    Button configureDevice;
 
     private OnFragmentInteractionListener mListener;
 
@@ -85,34 +107,71 @@ public class ConfigFragment extends Fragment implements OnSaveData {
         act.findViewById(R.id.toolbar);
         act.setTitle("System");
 
-        applicationKey = (EditText) root.findViewById(R.id.input_application_key);
         deviceName = (EditText) root.findViewById(R.id.input_device_name);
+        deviceEui = (EditText) root.findViewById(R.id.input_device_eui);
+        applicationKey = (EditText) root.findViewById(R.id.input_application_key);
         locationName = (EditText) root.findViewById(R.id.input_location_name);
 
         gpsLon = (EditText) root.findViewById(R.id.input_gps_lon);
         gpsLat = (EditText) root.findViewById(R.id.input_gps_lat);
         gpsAlt = (EditText) root.findViewById(R.id.input_gps_alt);
 
+        configureDevice = (Button) root.findViewById(R.id.configure_device_button);
+
         final ImageView locSourceIndIcon = (ImageView) root.findViewById(R.id.gps_source_indicator);
-        final ImageView systemNameSourceIndIcon = (ImageView) root.findViewById(R.id.system_name_source_indicator);
+        final ImageView deviceNameSourceIndIcon = (ImageView) root.findViewById(R.id.device_name_source_indicator);
+        final ImageView deviceEuiSourceIndIcon = (ImageView) root.findViewById(R.id.device_eui_source_indicator);
+        final ImageView applicationKeySourceIndIcon = (ImageView) root.findViewById(R.id.application_key_source_indicator);
         final ImageView locationNameSourceIndIcon = (ImageView) root.findViewById(R.id.location_name_source_indicator);
 
 
-        applicationKey.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        deviceName.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                systemNameSourceIndIcon.setImageResource(R.drawable.ic_edit_black);
-
-                return false;
+            public void afterTextChanged(Editable s) {
+                deviceNameSourceIndIcon.setImageResource(R.drawable.ic_edit_black);
             }
 
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+            }
         });
 
-        deviceName.setOnClickListener(new View.OnClickListener() {
+        locationName.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
+            public void afterTextChanged(Editable s) {
                 locationNameSourceIndIcon.setImageResource(R.drawable.ic_edit_black);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+            }
+        });
+
+        deviceEuiSourceIndIcon.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                randomDeviceEui = RandomStringUtils.randomNumeric(16);
+                deviceEui.setText(randomDeviceEui);
+                Toast.makeText(act, "Device EUI generated", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        applicationKeySourceIndIcon.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                randomApplicationKey = RandomStringUtils.randomNumeric(32);
+                applicationKey.setText(randomApplicationKey);
+                Toast.makeText(act, "Application Key generated", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -123,24 +182,199 @@ public class ConfigFragment extends Fragment implements OnSaveData {
                 gpsLat.setText(String.format("%2.2f", location.getLatitude()));
                 gpsAlt.setText(String.format("%2.2f", location.getAltitude()));
                 locSourceIndIcon.setImageResource(R.drawable.ic_gps_fixed);
-                Toast.makeText(act, "clicked", Toast.LENGTH_LONG).show();
+                Toast.makeText(act, "Location Updated", Toast.LENGTH_SHORT).show();
             }
         });
+
+        configureDevice.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (deviceName.length() != 0 && deviceEui.length() != 0 && applicationKey.length() != 0) {
+                    createNode();
+                } else {
+                    Toast.makeText(act, "Some fields are empty", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         return root;
     }
 
 
     void initData() {
-
         DecimalFormat coordinateFormatter = new DecimalFormat("00.000");
+    }
 
+    public void createNode() {
+        final String REQUEST_TAG = "configuration.node";
+        String url = "https://172.30.0.8:8090/api/devices";
+
+        JSONObject params = new JSONObject();
+        try {
+            params.put("applicationID", "1");
+            params.put("description", "A new test device...");
+            params.put("deviceProfileID", "e4fe0442-c898-4f12-8eee-f4e66e941db6");
+            params.put("devEUI", deviceEui.getText().toString());
+            params.put("name", deviceName.getText().toString());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        final String requestBody = params.toString();
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(REQUEST_TAG, response.toString());
+                        addKey();
+                        Toast.makeText(getActivity(), "Device configured successfully", Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(REQUEST_TAG, "Error: " + error.getMessage());
+                        String body;
+                        if (error.networkResponse.data != null) {
+                            try {
+                                body = new String(error.networkResponse.data, "UTF-8");
+                                System.out.println(body);
+                                if (body.contains("exists")) {
+                                    Toast.makeText(getActivity(), "Error: DeviceEUI already exists.", Toast.LENGTH_LONG).show();
+                                }
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    return requestBody == null ? null : requestBody.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                    return null;
+                }
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                String responseString = "";
+                if (response != null) {
+                    responseString = String.valueOf(response.statusCode);
+                }
+                return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsb3JhLWFwcC1zZXJ2ZXIiLCJpYXQiOjE1MTU2NzgzMzMsImV4cCI6MTU0NzIzOTUzMywiYXVkIjoibG9yYS1hcHAtc2VydmVyIiwic3ViIjoidXNlciIsInVzZXJuYW1lIjoiYWRtaW4ifQ.-XPr8-H84fUn_w5WYCEkMogP-YP-eARTjN3eCv7O4SI";
+                Map<String, String> headersSys = super.getHeaders();
+                Map<String, String> params = new HashMap<String, String>();
+                headersSys.remove("Authorization");
+                params.put("Authorization", jwtToken);
+                params.putAll(headersSys);
+                return params;
+            }
+        };
+
+        // Adding JsonObject request to request queue
+        AppSingleton.getInstance(getContext()).addToRequestQueue(postRequest, REQUEST_TAG);
+    }
+
+    public void addKey() {
+        final String REQUEST_TAG = "configuration.key";
+        String url = "https://172.30.0.8:8090/api/devices/" + deviceEui.getText().toString() + "/keys";
+
+        JSONObject params = new JSONObject();
+        try {
+            JSONObject subParams = new JSONObject();
+            subParams.put("appKey", applicationKey.getText().toString());
+            params.put("devEUI", deviceEui.getText().toString());
+            params.put("deviceKeys", subParams);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        final String requestBody = params.toString();
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(REQUEST_TAG, response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(REQUEST_TAG, "Error: " + error.getMessage());
+                        String body;
+                        if (error.networkResponse.data != null) {
+                            try {
+                                body = new String(error.networkResponse.data, "UTF-8");
+                                System.out.println(body);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    return requestBody == null ? null : requestBody.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                    return null;
+                }
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                String responseString = "";
+                if (response != null) {
+                    responseString = String.valueOf(response.statusCode);
+                }
+                return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsb3JhLWFwcC1zZXJ2ZXIiLCJpYXQiOjE1MTU2NzgzMzMsImV4cCI6MTU0NzIzOTUzMywiYXVkIjoibG9yYS1hcHAtc2VydmVyIiwic3ViIjoidXNlciIsInVzZXJuYW1lIjoiYWRtaW4ifQ.-XPr8-H84fUn_w5WYCEkMogP-YP-eARTjN3eCv7O4SI";
+                Map<String, String> headersSys = super.getHeaders();
+                Map<String, String> params = new HashMap<String, String>();
+                headersSys.remove("Authorization");
+                params.put("Authorization", jwtToken);
+                params.putAll(headersSys);
+                return params;
+            }
+        };
+
+        // Adding JsonObject request to request queue
+        AppSingleton.getInstance(getContext()).addToRequestQueue(postRequest, REQUEST_TAG);
+    }
+
+    private String formatString(String data) {
+        return StringUtils.removeEnd(data.replaceAll("(.{2})", "$1:"), ":");
     }
 
     @Override
     public void saveData() {
         DecimalFormat coordinateFormatter = new DecimalFormat("00.000");
-        String pos =  gpsLat.getText() + "," + gpsLon.getText() + "," + gpsAlt.getText();
-        String info = applicationKey.getText() + ";" + deviceName.getText() + ";" + locationName.getText() + ";" + pos + ";";
+        String pos = gpsLat.getText() + "," + gpsLon.getText() + "," + gpsAlt.getText();
+        String info = deviceName.getText() + ";" + formatString(deviceEui.getText().toString()) + ";" + formatString(applicationKey.getText().toString()) + ";" + locationName.getText() + ";" + pos + ";";
 
         NfcManager.getInstance().setTextMessage(info);
     }
