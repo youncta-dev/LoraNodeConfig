@@ -30,7 +30,7 @@
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
 
@@ -233,14 +233,32 @@
 
         </android.support.v7.widget.CardView>
 
+    <LinearLayout
+        android:id="@+id/LinearLayout02"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true">
         <Button
             android:id="@+id/configure_device_button"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:layout_weight="1"
             android:text="@string/device_configure_button_value"
-            android:textColor="#ffffff"
+            android:background="?attr/colorPrimary"
+            android:textColor="@color/white"
+            android:layout_marginRight="5dp"
             android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/test_device_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/device_test_button_value"
+            android:background="?attr/colorPrimary"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
 
         <Space
             android:layout_width="fill_parent"

@@ -21,6 +21,7 @@
     <string name="hint_gps_latitude">Lat</string>
     <string name="hint_gps_altitude">Alt</string>
     <string name="device_configure_button_value">Configure Device</string>
+    <string name="device_test_button_value">Test Device</string>
     <string name="hint_netmask">Netmask</string>
     <string name="hint_stag">S Tag</string>
     <string name="hint_ctag">C Tag</string>

@@ -1,7 +1,7 @@
 package com.youncta.loranodeconfig;
 
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -64,9 +64,9 @@ public class ConfigFragment extends Fragment implements OnSaveData {
     EditText gpsLat;
     EditText gpsAlt;
     Button configureDevice;
+    Button testDevice;
 
-    final private static String applicationServerHost = "172.30.0.8";
-    final private static String applicationServerPort = "8090";
+    final private static String applicationServer = "172.30.0.8:8090";
 
     private OnFragmentInteractionListener mListener;
 
@@ -118,6 +118,10 @@ public class ConfigFragment extends Fragment implements OnSaveData {
         gpsAlt = (EditText) root.findViewById(R.id.input_gps_alt);
 
         configureDevice = (Button) root.findViewById(R.id.configure_device_button);
+        testDevice = (Button) root.findViewById(R.id.test_device_button);
+        configureDevice.setEnabled(true);
+        testDevice.setEnabled(false);
+        testDevice.setBackgroundColor(Color.GRAY);
 
         final ImageView locSourceIndIcon = (ImageView) root.findViewById(R.id.gps_source_indicator);
         final ImageView deviceNameSourceIndIcon = (ImageView) root.findViewById(R.id.device_name_source_indicator);
@@ -164,6 +168,12 @@ public class ConfigFragment extends Fragment implements OnSaveData {
             public void onClick(View v) {
                 deviceEui.setText(RandomStringUtils.randomNumeric(16));
                 Toast.makeText(act, "Device EUI generated", Toast.LENGTH_SHORT).show();
+                if (!configureDevice.isEnabled()) {
+                    testDevice.setEnabled(false);
+                    testDevice.setBackgroundColor(Color.GRAY);
+                    configureDevice.setEnabled(true);
+                    configureDevice.setBackgroundColor(getResources().getColor(R.color.app));
+                }
             }
         });
 
@@ -195,6 +205,16 @@ public class ConfigFragment extends Fragment implements OnSaveData {
             }
         });
 
+        testDevice.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (!configureDevice.isEnabled() && deviceEui.length() != 0) {
+                    testNode();
+                } else {
+                    Toast.makeText(act, "Configure device first", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
         return root;
     }
 
@@ -205,7 +225,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
     public void createNode() {
         final String REQUEST_TAG = "configuration.node";
-        String url = "https://" + applicationServerHost + ":" + applicationServerPort + "/api/devices";
+        String url = "https://" + applicationServer + "/api/devices";
 
         JSONObject params = new JSONObject();
         try {
@@ -226,6 +246,10 @@ public class ConfigFragment extends Fragment implements OnSaveData {
                         Log.d(REQUEST_TAG, response.toString());
                         addKey();
                         Toast.makeText(getActivity(), "Device configured successfully", Toast.LENGTH_LONG).show();
+                        configureDevice.setEnabled(false);
+                        configureDevice.setBackgroundColor(Color.GRAY);
+                        testDevice.setEnabled(true);
+                        testDevice.setBackgroundColor(getResources().getColor(R.color.app));
                     }
                 },
                 new Response.ErrorListener() {
@@ -238,7 +262,9 @@ public class ConfigFragment extends Fragment implements OnSaveData {
                                 body = new String(error.networkResponse.data, "UTF-8");
                                 System.out.println(body);
                                 if (body.contains("exists")) {
-                                    Toast.makeText(getActivity(), "Error: DeviceEUI already exists.", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getActivity(), "Error: DeviceEUI already exists", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(getActivity(), "Error: Server not responding", Toast.LENGTH_LONG).show();
                                 }
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
@@ -289,7 +315,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
     public void addKey() {
         final String REQUEST_TAG = "configuration.key";
-        String url = "https://" + applicationServerHost + ":" + applicationServerPort + "/api/devices/" + deviceEui.getText().toString() + "/keys";
+        String url = "https://" + applicationServer + "/api/devices/" + deviceEui.getText().toString() + "/keys";
 
         JSONObject params = new JSONObject();
         try {
@@ -317,6 +343,91 @@ public class ConfigFragment extends Fragment implements OnSaveData {
                         if (error.networkResponse.data != null) {
                             try {
                                 body = new String(error.networkResponse.data, "UTF-8");
+                                Toast.makeText(getActivity(), "Error: Server not responding", Toast.LENGTH_LONG).show();
+                                System.out.println(body);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+        ) {
+            @Override
+            public String getBodyContentType() {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    return requestBody == null ? null : requestBody.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                    return null;
+                }
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                String responseString = "";
+                if (response != null) {
+                    responseString = String.valueOf(response.statusCode);
+                }
+                return Response.success(responseString, HttpHeaderParser.parseCacheHeaders(response));
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                String jwtToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJsb3JhLWFwcC1zZXJ2ZXIiLCJpYXQiOjE1MTU2NzgzMzMsImV4cCI6MTU0NzIzOTUzMywiYXVkIjoibG9yYS1hcHAtc2VydmVyIiwic3ViIjoidXNlciIsInVzZXJuYW1lIjoiYWRtaW4ifQ.-XPr8-H84fUn_w5WYCEkMogP-YP-eARTjN3eCv7O4SI";
+                Map<String, String> headersSys = super.getHeaders();
+                Map<String, String> params = new HashMap<String, String>();
+                headersSys.remove("Authorization");
+                params.put("Authorization", jwtToken);
+                params.putAll(headersSys);
+                return params;
+            }
+        };
+
+        // Adding JsonObject request to request queue
+        AppSingleton.getInstance(getContext()).addToRequestQueue(postRequest, REQUEST_TAG);
+    }
+
+    public void testNode() {
+        final String REQUEST_TAG = "test.node";
+        String url = "https://" + applicationServer + "/api/devices/" + deviceEui.getText().toString() + "/queue";
+
+        JSONObject params = new JSONObject();
+        try {
+            params.put("reference", "reference-string");
+            params.put("confirmed", true);
+            params.put("fPort", 2);
+            params.put("data", "MQ==");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        final String requestBody = params.toString();
+
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(REQUEST_TAG, response.toString());
+                        Toast.makeText(getActivity(), "LED blink notification sent", Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(REQUEST_TAG, "Error: " + error.getMessage());
+                        String body;
+                        if (error.networkResponse.data != null) {
+                            try {
+                                body = new String(error.networkResponse.data, "UTF-8");
+                                if (body.contains("object does not exist")) {
+                                    Toast.makeText(getActivity(), "Error: Start device first", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(getActivity(), "Error: Server not responding", Toast.LENGTH_LONG).show();
+                                }
                                 System.out.println(body);
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
@@ -426,23 +537,19 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
 
     private Location getLastKnownLocation() {
-        String locationProvider = null;
         locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
         Location bestLocation = null;
         for (String provider : providers) {
             Location l = null;
-
-
             try {
                 l = locationManager.getLastKnownLocation(provider);
             } catch (SecurityException e) {
-
+                e.printStackTrace();
             }
             if (l == null) {
                 continue;
             }
-            locationProvider = provider;
             if (bestLocation == null) {
                 // Found best last known location: %s", l);
                 bestLocation = l;
@@ -451,8 +558,8 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
         if (bestLocation == null) {
             bestLocation = new Location("dummy");
-            bestLocation.setLongitude(84.9789);
-            bestLocation.setLatitude(56.4661);
+            bestLocation.setLongitude(45.00);
+            bestLocation.setLatitude(9.00);
             bestLocation.setAltitude(0);
         }
         return bestLocation;
