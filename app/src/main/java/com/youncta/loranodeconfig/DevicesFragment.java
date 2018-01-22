@@ -27,6 +27,10 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -35,19 +39,15 @@ import java.util.Map;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.json.JSONObject;
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ConfigFragment.OnFragmentInteractionListener} interface
+ * {@link DevicesFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ConfigFragment#newInstance} factory method to
+ * Use the {@link DevicesFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ConfigFragment extends Fragment implements OnSaveData {
+public class DevicesFragment extends Fragment implements OnSaveData {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -66,11 +66,11 @@ public class ConfigFragment extends Fragment implements OnSaveData {
     Button configureDevice;
     Button testDevice;
 
-    final private static String applicationServer = "172.30.0.9:8090";
+    final private static String applicationServer = "172.30.0.8:8090";
 
     private OnFragmentInteractionListener mListener;
 
-    public ConfigFragment() {
+    public DevicesFragment() {
         // Required empty public constructor
     }
 
@@ -82,8 +82,8 @@ public class ConfigFragment extends Fragment implements OnSaveData {
      * @return A new instance of fragment ConfigFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ConfigFragment newInstance(String param1) {
-        ConfigFragment fragment = new ConfigFragment();
+    public static DevicesFragment newInstance(String param1) {
+        DevicesFragment fragment = new DevicesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);
@@ -106,7 +106,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
         final AppCompatActivity act = (AppCompatActivity) getActivity();
         act.findViewById(R.id.toolbar);
-        act.setTitle("System");
+        act.setTitle("Configure");
 
         deviceName = (EditText) root.findViewById(R.id.input_device_name);
         deviceEui = (EditText) root.findViewById(R.id.input_device_eui);
@@ -558,8 +558,8 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
         if (bestLocation == null) {
             bestLocation = new Location("dummy");
-            bestLocation.setLongitude(9.00);
-            bestLocation.setLatitude(45.00);
+            bestLocation.setLongitude(45.00);
+            bestLocation.setLatitude(9.00);
             bestLocation.setAltitude(0);
         }
         return bestLocation;
