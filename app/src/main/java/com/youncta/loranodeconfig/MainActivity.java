@@ -43,7 +43,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnFragmentInteractionListener, MainFragment.OnFragmentInteractionListener, ConfigFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LoginFragment.OnFragmentInteractionListener, MainFragment.OnFragmentInteractionListener, ConfigFragment.OnFragmentInteractionListener, DevicesFragment.OnFragmentInteractionListener {
 
     NfcAdapter mNfcAdapter;
 
@@ -198,18 +198,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_info) {
             f = MainFragment.newInstance("");
-        } else if (id == R.id.nav_system) {
+        } else if (id == R.id.configure_devices) {
             f = ConfigFragment.newInstance("");
+        } else if (id == R.id.all_devices) {
+            System.out.println("I AM HEREEEEEE");
+            f = DevicesFragment.newInstance("");
+            System.out.println("I AM HEREEEEEE - OUT");
         }
 
+        System.out.println("I AM BEFORE IF");
         if (f != null) {
             currentFragment = f;
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.content_main, f).commit();
         }
+        System.out.println("I AM BEFORE IF - OUT");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+        System.out.println("I AM ON NAVIGATION SELECTED - OUT");
         return true;
     }
 
@@ -217,12 +225,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onFragmentInteraction(Object source, int action, Object par) {
             switch (action) {
                 case LoginFragment.ENABLE_APP:
-                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     Menu navigationMenu = navigationView.getMenu();
                     navigationMenu.findItem(R.id.nav_info).setEnabled(true);
-                    navigationMenu.findItem(R.id.nav_system).setEnabled(true);
-                    //navigationMenu.findItem(R.id.nav_ethernet).setEnabled(true);
-                    //navigationMenu.findItem(R.id.nav_licensing).setEnabled(true);
+                    navigationMenu.findItem(R.id.configure_devices).setEnabled(true);
+                    navigationMenu.findItem(R.id.all_devices).setEnabled(true);
                     break;
                 case LoginFragment.DISABLE_APP:
                     break;

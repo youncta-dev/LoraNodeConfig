@@ -76,4 +76,20 @@
     <string name="nfcWrittenTitle">Success!</string>
     <string name="nfcWritten">The NFC tag was written successfully.</string>
     <string name="nfcWriteInstructions">Place your phone close to the NFC tag.</string>
+    <string name="info">Info</string>
+    <string name="configure_devices">Configure</string>
+    <string name="all_devices">Devices</string>
+
+    <string-array name="Planets">
+        <item>Sun</item>
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
+
 </resources>

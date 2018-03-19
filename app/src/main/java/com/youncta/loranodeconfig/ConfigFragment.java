@@ -66,7 +66,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
     Button configureDevice;
     Button testDevice;
 
-    final private static String applicationServer = "172.30.0.9:8090";
+    final private static String applicationServer = "172.30.0.3:8090";
 
     private OnFragmentInteractionListener mListener;
 
@@ -106,7 +106,7 @@ public class ConfigFragment extends Fragment implements OnSaveData {
 
         final AppCompatActivity act = (AppCompatActivity) getActivity();
         act.findViewById(R.id.toolbar);
-        act.setTitle("System");
+        act.setTitle("Configure");
 
         deviceName = (EditText) root.findViewById(R.id.input_device_name);
         deviceEui = (EditText) root.findViewById(R.id.input_device_eui);

@@ -71,7 +71,6 @@ public class MainFragment extends Fragment implements OnSaveData {
         frequencyRange = (TextView) root.findViewById(R.id.frequencyRange);
         serialNumber = (TextView) root.findViewById(R.id.serialNumber);
 
-
         final AppCompatActivity act = (AppCompatActivity) getActivity();
         act.findViewById(R.id.toolbar);
         act.setTitle("Info");
